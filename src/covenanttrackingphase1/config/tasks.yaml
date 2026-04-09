@@ -1,0 +1,27 @@
+validate_excel_input_task:
+  description: >
+    Validate the workbook and store payload in shared state. You MUST invoke
+    `agentic_validate_excel_tool` exactly once with run_id=`{run_id}` and
+    file_path=`{covenant_workbook_path}`. Do not print or reformat raw financial payload.
+    Shared state is authoritative for downstream tasks.
+  expected_output: >
+    The exact JSON from agentic_validate_excel_tool containing run_id and stored_key.
+  agent: excel_ingestion_agent
+
+calculate_dscr_task:
+  description: >
+    Compute DSCR from shared state only. You MUST invoke `agentic_calculate_dscr_tool`
+    exactly once with run_id=`{run_id}`. Never reconstruct payload from prior text and never
+    infer or mutate threshold values.
+  expected_output: >
+    The exact JSON from agentic_calculate_dscr_tool containing run_id, stored_key, and status.
+  agent: calculation_agent
+
+generate_decision_report_task:
+  description: >
+    Generate final covenant report from shared state only. You MUST invoke
+    `agentic_generate_report_tool` exactly once with run_id=`{run_id}`.
+    Do not fabricate decision or calculation values.
+  expected_output: >
+    The exact JSON from agentic_generate_report_tool containing run_id, stored_key, and status.
+  agent: reporting_agent
